@@ -5,13 +5,17 @@ on:
     branches:
       - main
       - dev
+  push:
+    branches:
+      - main
+      - dev
 
 jobs:
   setup:
     name: Setup Rust toolchain
     runs-on: ubuntu-latest
-    #    outputs:
-    #      cache-key: ${{ steps.cache-cargo.outputs.cache-key }}
+    outputs:
+      cache-key: ${{ steps.cache-cargo.outputs.cache-key }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -21,18 +25,18 @@ jobs:
         with:
           components: clippy, rustfmt
 
-  #      - name: Cache cargo registry
-  #        id: cache-cargo
-  #        uses: actions/cache@v4
-  #        with:
-  #          path: |
-  #            ~/.cargo/registry
-  #            ~/.cargo/git
-  #            target
-  #          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-  #          restore-keys: |
-  #            ${{ runner.os }}-cargo-
-  #
+      - name: Cache cargo registry
+        id: cache-cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
   fmt:
     name: Check formatting
     runs-on: ubuntu-latest
