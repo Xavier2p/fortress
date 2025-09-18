@@ -1,0 +1,12 @@
+[package]
+name = "fortress"
+version = "0.1.0"
+edition = "2024"
+description = "A simple password manager CLI application"
+authors = ["Blaxxmith"]
+
+[[bin]]
+name = "frtrs"
+path = "src/main.rs"
+
+[dependencies]
