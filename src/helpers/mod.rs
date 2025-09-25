@@ -1,2 +1,2 @@
 pub mod cli;
-mod errors;
+pub mod errors;

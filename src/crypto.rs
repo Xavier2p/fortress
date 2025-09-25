@@ -1,3 +1,4 @@
+use crate::helpers::errors::FortressError;
 use aes_gcm::{
     aead::{Aead, KeyInit}, Aes256Gcm, Key,
     Nonce,
@@ -5,8 +6,6 @@ use aes_gcm::{
 use argon2::{Argon2, Params};
 use rand::RngCore;
 use serde::{Deserialize, Serialize};
-use std::fs;
-use std::io::{self, Write};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PasswordEntry {
@@ -21,64 +20,20 @@ struct DatabaseWrapper {
     entries: Vec<PasswordEntry>,
 }
 
-#[derive(Debug)]
-#[allow(dead_code)]
-pub enum CryptoError {
-    InvalidPassword,
-    CorruptedData,
-    FileNotFound,
-    IoError(io::Error),
-    SerializationError(serde_json::Error),
-    EncryptionError,
-    DecryptionError,
-}
+pub struct Crypto;
 
-impl std::fmt::Display for CryptoError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            CryptoError::InvalidPassword => write!(f, "Invalid password"),
-            CryptoError::CorruptedData => write!(f, "Database file is corrupted or tampered"),
-            CryptoError::FileNotFound => write!(f, "Database file not found"),
-            CryptoError::IoError(e) => write!(f, "IO error: {}", e),
-            CryptoError::SerializationError(e) => write!(f, "Serialization error: {}", e),
-            CryptoError::EncryptionError => write!(f, "Encryption failed"),
-            CryptoError::DecryptionError => write!(f, "Decryption failed"),
-        }
-    }
-}
-
-impl std::error::Error for CryptoError {}
-
-impl From<io::Error> for CryptoError {
-    fn from(error: io::Error) -> Self {
-        if error.kind() == io::ErrorKind::NotFound {
-            CryptoError::FileNotFound
-        } else {
-            CryptoError::IoError(error)
-        }
-    }
-}
-
-impl From<serde_json::Error> for CryptoError {
-    fn from(error: serde_json::Error) -> Self {
-        CryptoError::SerializationError(error)
-    }
-}
-
-pub struct PasswordManager;
-
-impl PasswordManager {
+impl Crypto {
     /// Derive a 256-bit key from password using Argon2id
-    fn derive_key(password: &str, salt: &[u8; 32]) -> Result<[u8; 32], CryptoError> {
+    fn derive_key(password: &str, salt: &[u8; 32]) -> Result<[u8; 32], FortressError> {
         let params =
-            Params::new(65536, 3, 4, Some(32)).map_err(|_| CryptoError::EncryptionError)?;
+            Params::new(65536, 3, 4, Some(32)).map_err(|_| FortressError::EncryptionFailed)?;
 
         let argon2 = Argon2::new(argon2::Algorithm::Argon2id, argon2::Version::V0x13, params);
 
         let mut key = [0u8; 32];
         argon2
             .hash_password_into(password.as_bytes(), salt, &mut key)
-            .map_err(|_| CryptoError::EncryptionError)?;
+            .map_err(|_| FortressError::EncryptionFailed)?;
 
         Ok(key)
     }
@@ -88,7 +43,7 @@ impl PasswordManager {
     pub fn encrypt_database(
         entries: &[PasswordEntry],
         master_password: &str,
-    ) -> Result<Vec<u8>, CryptoError> {
+    ) -> Result<Vec<u8>, FortressError> {
         // Create wrapper with password check
         let wrapper = DatabaseWrapper {
             _pwcheck: "valid".to_string(),
@@ -116,7 +71,7 @@ impl PasswordManager {
         // Encrypt
         let ciphertext = cipher
             .encrypt(nonce, plaintext)
-            .map_err(|_| CryptoError::EncryptionError)?;
+            .map_err(|_| FortressError::EncryptionFailed)?;
 
         // Build final format: [Salt: 32 bytes][Nonce: 12 bytes][Encrypted Data + Auth Tag]
         let mut result = Vec::with_capacity(32 + 12 + ciphertext.len());
@@ -132,19 +87,19 @@ impl PasswordManager {
     pub fn decrypt_database(
         encrypted_data: &[u8],
         master_password: &str,
-    ) -> Result<Vec<PasswordEntry>, CryptoError> {
+    ) -> Result<Vec<PasswordEntry>, FortressError> {
         // Check minimum file size (32 + 12 + 16 = 60 bytes minimum)
         if encrypted_data.len() < 60 {
-            return Err(CryptoError::CorruptedData);
+            return Err(FortressError::CorruptedVault);
         }
 
         // Extract components
         let salt: [u8; 32] = encrypted_data[0..32]
             .try_into()
-            .map_err(|_| CryptoError::CorruptedData)?;
+            .map_err(|_| FortressError::CorruptedVault)?;
         let nonce_bytes: [u8; 12] = encrypted_data[32..44]
             .try_into()
-            .map_err(|_| CryptoError::CorruptedData)?;
+            .map_err(|_| FortressError::CorruptedVault)?;
         let ciphertext = &encrypted_data[44..];
 
         // Derive key from password
@@ -158,62 +113,20 @@ impl PasswordManager {
         // Decrypt
         let plaintext = cipher
             .decrypt(nonce, ciphertext)
-            .map_err(|_| CryptoError::InvalidPassword)?;
+            .map_err(|_| FortressError::InvalidMasterPassword)?;
 
         // Parse JSON
-        let json_str = std::str::from_utf8(&plaintext).map_err(|_| CryptoError::CorruptedData)?;
+        let json_str =
+            std::str::from_utf8(&plaintext).map_err(|_| FortressError::CorruptedVault)?;
 
         let wrapper: DatabaseWrapper = serde_json::from_str(json_str)?;
 
         // Verify password check
         if wrapper._pwcheck != "valid" {
-            return Err(CryptoError::InvalidPassword);
+            return Err(FortressError::InvalidMasterPassword);
         }
 
         Ok(wrapper.entries)
-    }
-
-    /// Load encrypted database from file
-    pub fn load_database(
-        file_path: &str,
-        master_password: &str,
-    ) -> Result<Vec<PasswordEntry>, CryptoError> {
-        let encrypted_data = fs::read(file_path)?;
-        Self::decrypt_database(&encrypted_data, master_password)
-    }
-
-    /// Save encrypted database to file
-    pub fn save_database(
-        file_path: &str,
-        entries: &[PasswordEntry],
-        master_password: &str,
-    ) -> Result<(), CryptoError> {
-        let encrypted_data = Self::encrypt_database(entries, master_password)?;
-        fs::write(file_path, encrypted_data)?;
-        Ok(())
-    }
-
-    /// Prompt for password securely (without echo)
-    pub fn prompt_password(prompt: &str) -> Result<String, CryptoError> {
-        print!("{}", prompt);
-        io::stdout().flush().map_err(CryptoError::IoError)?;
-
-        // Note: In a real implementation, you'd want to use a crate like `rpassword`
-        // to hide password input. For simplicity, this reads normally.
-        let mut password = String::new();
-        io::stdin()
-            .read_line(&mut password)
-            .map_err(CryptoError::IoError)?;
-
-        // Remove trailing newline
-        if password.ends_with('\n') {
-            password.pop();
-            if password.ends_with('\r') {
-                password.pop();
-            }
-        }
-
-        Ok(password)
     }
 }
 
@@ -221,6 +134,7 @@ impl PasswordManager {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::helpers::errors::FortressError;
 
     #[test]
     fn test_encrypt_decrypt_cycle() {
@@ -240,11 +154,11 @@ mod tests {
         let master_password = "my_master_password";
 
         // Encrypt
-        let encrypted = PasswordManager::encrypt_database(&entries, master_password)
-            .expect("Encryption should succeed");
+        let encrypted =
+            Crypto::encrypt_database(&entries, master_password).expect("Encryption should succeed");
 
         // Decrypt
-        let decrypted = PasswordManager::decrypt_database(&encrypted, master_password)
+        let decrypted = Crypto::decrypt_database(&encrypted, master_password)
             .expect("Decryption should succeed");
 
         assert_eq!(entries.len(), decrypted.len());
@@ -261,10 +175,10 @@ mod tests {
             password: "test123".to_string(),
         }];
 
-        let encrypted = PasswordManager::encrypt_database(&entries, "correct_password")
+        let encrypted = Crypto::encrypt_database(&entries, "correct_password")
             .expect("Encryption should succeed");
 
-        let result = PasswordManager::decrypt_database(&encrypted, "wrong_password");
-        assert!(matches!(result, Err(CryptoError::InvalidPassword)));
+        let result = Crypto::decrypt_database(&encrypted, "wrong_password");
+        assert!(matches!(result, Err(FortressError::InvalidMasterPassword)));
     }
 }
