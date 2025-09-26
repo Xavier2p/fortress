@@ -1,5 +1,4 @@
 use clap::{Parser, Subcommand};
-use std::path::Path;
 
 #[derive(Parser)]
 #[command(name = "frt-rs", version, about, long_about = None)]
@@ -13,7 +12,7 @@ pub struct Cli {
     pub verbose: bool,
 
     /// The input file path
-    #[arg(short, long, value_name = "PATH", default_value = "/tmp/vault.frt", value_parser = check_vault_path)]
+    #[arg(short, long, value_name = "PATH", default_value = "/tmp/vault.frt")]
     pub file: Option<String>,
 
     /// Get the master password from stdin. If not defined, will prompt for it
@@ -49,15 +48,14 @@ pub enum Commands {
         #[arg(short, long, conflicts_with = "generate")]
         password: Option<String>,
     },
-
     /// List all entries in the vault
     List {},
 }
 
-fn check_vault_path(input: &str) -> Result<String, String> {
-    if !Path::new(input).exists() {
-        Err(format!("The path '{}' does not exist.", input))
-    } else {
-        Ok(input.to_string())
-    }
-}
+// fn check_vault_path(input: &str) -> Result<String, String> {
+//     if !Path::new(input).exists() {
+//         Err(format!("The path '{}' does not exist.", input))
+//     } else {
+//         Ok(input.to_string())
+//     }
+// }

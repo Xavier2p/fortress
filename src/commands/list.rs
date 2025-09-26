@@ -1,9 +1,12 @@
-use crate::crypto::{CryptoError, PasswordEntry};
+use crate::helpers::{self, GeneralArgs, errors::FortressError};
 
-pub fn list(decrypted: Result<Vec<PasswordEntry>, CryptoError>) {
-    println!("Listing all entries in the vault:");
+pub fn list(args: GeneralArgs) -> Result<(), FortressError> {
+    let decrypted = helpers::load_vault(args);
     match decrypted {
-        Ok(decrypted) => println!("Decrypted:\n{:#?}", decrypted),
-        Err(e) => eprintln!("Error decrypting database: {:?}", e),
+        Ok(decrypted) => {
+            println!("Listing all entries in the vault:\n{:#?}", decrypted);
+            Ok(())
+        }
+        Err(e) => Err(e),
     }
 }

@@ -1,22 +1,18 @@
-use crate::crypto::{Crypto, PasswordEntry};
-use crate::helpers::errors::FortressError;
+use crate::crypto::PasswordEntry;
+use crate::helpers::{self, errors::FortressError, GeneralArgs};
 use std::path::Path;
 
-pub fn create(force: bool, password: String, path: String) -> Result<(), FortressError> {
-    if Path::new(&path).exists() && !force {
+pub fn create(force: bool, args: GeneralArgs) -> Result<(), FortressError> {
+    if Path::new(&args.file).exists() && !force {
         Err(FortressError::VaultAlreadyExists)
     } else {
         let empty_entries: Vec<PasswordEntry> = Vec::new();
-        let vault = match Crypto::encrypt_database(&empty_entries, &password) {
-            Ok(vault) => vault,
-            Err(_) => return Err(FortressError::EncryptionFailed),
-        };
-        match std::fs::write(&path, vault) {
+        match helpers::save_vault(args.clone(), &empty_entries) {
             Ok(_) => {
-                println!("Vault created at {}", path);
+                println!("Created new vault at {}", args.file);
                 Ok(())
             }
-            Err(e) => Err(FortressError::IoError(e)),
+            Err(e) => Err(e),
         }
     }
 }
@@ -45,7 +41,10 @@ mod tests {
     fn test_create_new_vault() {
         let path = "test_vault.enc";
         cleanup(path);
-        let result = create(true, "testpw".to_string(), path.to_string());
+        let result = create(
+            true,
+            GeneralArgs::new(false, path.to_string(), "testpw".to_string()),
+        );
         assert!(result.is_ok());
         assert!(Path::new(path).exists());
         cleanup(path);
@@ -58,7 +57,10 @@ mod tests {
         // Create file first
         let mut f = fs::File::create(path).unwrap();
         writeln!(f, "dummy").unwrap();
-        let result = create(false, "pw".to_string(), path.to_string());
+        let result = create(
+            false,
+            GeneralArgs::new(false, path.to_string(), "pw".to_string()),
+        );
         assert!(matches!(result, Err(FortressError::VaultAlreadyExists)));
         cleanup(path);
     }
@@ -70,7 +72,10 @@ mod tests {
         // Create file first
         let mut f = fs::File::create(path).unwrap();
         writeln!(f, "dummy").unwrap();
-        let result = create(true, "pw".to_string(), path.to_string());
+        let result = create(
+            true,
+            GeneralArgs::new(false, path.to_string(), "pw".to_string()),
+        );
         assert!(result.is_ok());
         assert!(Path::new(path).exists());
         cleanup(path);
