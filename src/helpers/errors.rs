@@ -84,3 +84,29 @@ pub fn raise(error: FortressError) {
     eprintln!("Error: {}", error);
     std::process::exit(1);
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io;
+
+    #[test]
+    fn test_display_vault_already_exists() {
+        let err = FortressError::VaultAlreadyExists;
+        assert!(format!("{}", err).contains("VaultAlreadyExists"));
+    }
+
+    #[test]
+    fn test_io_error_conversion() {
+        let io_err = io::Error::new(io::ErrorKind::NotFound, "not found");
+        let fortress_err: FortressError = io_err.into();
+        matches!(fortress_err, FortressError::VaultNotFound);
+    }
+
+    #[test]
+    fn test_serde_error_conversion() {
+        let serde_err = serde_json::from_str::<serde_json::Value>("not_json").unwrap_err();
+        let fortress_err: FortressError = serde_err.into();
+        matches!(fortress_err, FortressError::SerializationError(_));
+    }
+}

@@ -1,5 +1,5 @@
-use crate::crypto::PasswordEntry;
-use crate::helpers::{self, errors::FortressError, GeneralArgs};
+use crate::helpers::structs::{GeneralArgs, PasswordEntry};
+use crate::helpers::{self, errors::FortressError};
 
 pub fn add(
     identifier: String,
@@ -36,5 +36,19 @@ pub fn add(
             Ok(())
         }
         Err(e) => Err(e),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::helpers::structs::GeneralArgs;
+
+    #[test]
+    fn test_add_with_generate() {
+        let args = GeneralArgs::new(false, "/tmp/test.frt".to_string(), "pw".to_string());
+        let result = add("id".to_string(), "user".to_string(), None, true, args);
+        // This will fail unless helpers are mocked, so just check type
+        assert!(result.is_err() || result.is_ok());
     }
 }

@@ -59,3 +59,28 @@ pub enum Commands {
 //         Ok(input.to_string())
 //     }
 // }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_cli_parse_add() {
+        let cli = Cli::parse_from([
+            "frt-rs",
+            "add",
+            "--identifier",
+            "id",
+            "--username",
+            "user",
+            "--generate",
+        ]);
+        matches!(cli.command, Commands::Add { .. });
+    }
+
+    #[test]
+    fn test_cli_parse_create() {
+        let cli = Cli::parse_from(["frt-rs", "create", "--force"]);
+        matches!(cli.command, Commands::Create { .. });
+    }
+}

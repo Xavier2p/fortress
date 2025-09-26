@@ -3,7 +3,8 @@ mod crypto;
 mod helpers;
 
 use clap::Parser;
-use helpers::{GeneralArgs, cli, errors::raise};
+use helpers::structs::GeneralArgs;
+use helpers::{cli, errors::raise};
 use rpassword::prompt_password;
 
 fn main() {

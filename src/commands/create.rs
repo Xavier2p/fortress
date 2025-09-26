@@ -1,5 +1,5 @@
-use crate::crypto::PasswordEntry;
-use crate::helpers::{self, errors::FortressError, GeneralArgs};
+use crate::helpers::structs::{GeneralArgs, PasswordEntry};
+use crate::helpers::{self, errors::FortressError};
 use std::path::Path;
 
 pub fn create(force: bool, args: GeneralArgs) -> Result<(), FortressError> {
