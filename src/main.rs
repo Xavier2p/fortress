@@ -1,6 +1,5 @@
 mod commands;
 mod crypto;
-mod data;
 mod helpers;
 
 use clap::Parser;
@@ -29,7 +28,7 @@ fn main() {
             username,
             password,
             generate,
-        } => commands::add::add(identifier, username, password, generate),
+        } => commands::add::add(identifier, username, password, generate, general_args),
         cli::Commands::List {} => commands::list::list(general_args),
     };
 
