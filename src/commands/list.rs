@@ -5,8 +5,8 @@ pub fn list(args: GeneralArgs) -> Result<(), FortressError> {
     let decrypted = helpers::load_vault(args);
     match decrypted {
         Ok(decrypted) => {
-            println!("All stored entries: [");
-            decrypted.iter().for_each(|item| println!("{}", item));
+            println!("[");
+            decrypted.iter().for_each(|item| println!("\t{}", item));
             println!("]");
             Ok(())
         }

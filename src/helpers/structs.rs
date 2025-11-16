@@ -12,7 +12,7 @@ impl fmt::Display for PasswordEntry {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "[ENTRY]: '{}': '{}' - '{}'",
+            "{} ({}): '{}'",
             self.identifier,
             self.username,
             "*".repeat(self.password.len())
@@ -49,7 +49,6 @@ mod tests {
             password: "secret".to_string(),
         };
         let display = format!("{}", entry);
-        assert!(display.contains("[ENTRY]:"));
         assert!(display.contains("id"));
         assert!(display.contains("user"));
         assert!(display.contains("******"));
