@@ -50,6 +50,14 @@ pub fn generate_password(length: usize) -> String {
             CHARSET[idx] as char
         })
         .collect();
+    match cli_clipboard::set_contents(password.to_string()) {
+        Ok(_) => {
+            println!("Your generated password is in your clipboard");
+        }
+        Err(_) => {
+            println!("Error in setting clipboard, your password is: {}", password);
+        }
+    }
     password
 }
 
