@@ -2,10 +2,11 @@ use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
 #[command(name = "frt-rs", version, about, long_about = None)]
+#[command(propagate_version = true)]
 pub struct Cli {
     /// The command to run
     #[command(subcommand)]
-    pub command: Commands,
+    pub command: Option<Commands>,
 
     /// Enable verbose output
     #[arg(short, long)]
@@ -40,7 +41,7 @@ pub enum Commands {
         #[arg(short, long)]
         username: String,
 
-        /// Generate a new password. Mutually exclusive with 'direct'
+        /// Generate a new password. Mutually exclusive with 'password'
         #[arg(short, long, conflicts_with = "password")]
         generate: bool,
 
@@ -75,12 +76,12 @@ mod tests {
             "user",
             "--generate",
         ]);
-        matches!(cli.command, Commands::Add { .. });
+        matches!(cli.command, Some(Commands::Add { .. }));
     }
 
     #[test]
     fn test_cli_parse_create() {
         let cli = Cli::parse_from(["frt-rs", "create", "--force"]);
-        matches!(cli.command, Commands::Create { .. });
+        matches!(cli.command, Some(Commands::Create { .. }));
     }
 }
