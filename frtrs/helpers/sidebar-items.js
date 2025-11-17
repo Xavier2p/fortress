@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["debug","generate_password","load_vault","save_vault"],"mod":["cli","errors","structs"]};
