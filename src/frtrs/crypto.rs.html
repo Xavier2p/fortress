@@ -2,8 +2,8 @@
 <a href=#2 id=2 data-nosnippet>2</a></span><span class="kw">use </span><span class="kw">crate</span>::helpers::errors::FortressError;
 <a href=#3 id=3 data-nosnippet>3</a><span class="kw">use </span><span class="kw">crate</span>::helpers::structs::PasswordEntry;
 <a href=#4 id=4 data-nosnippet>4</a><span class="kw">use </span>aes_gcm::{
-<a href=#5 id=5 data-nosnippet>5</a>    aead::{Aead, KeyInit}, Aes256Gcm, Key,
-<a href=#6 id=6 data-nosnippet>6</a>    Nonce,
+<a href=#5 id=5 data-nosnippet>5</a>    Aes256Gcm, Key, Nonce,
+<a href=#6 id=6 data-nosnippet>6</a>    aead::{Aead, KeyInit},
 <a href=#7 id=7 data-nosnippet>7</a>};
 <a href=#8 id=8 data-nosnippet>8</a><span class="kw">use </span>argon2::{Argon2, Params};
 <a href=#9 id=9 data-nosnippet>9</a><span class="kw">use </span>rand::RngCore;
@@ -99,7 +99,7 @@
 <a href=#99 id=99 data-nosnippet>99</a>/// - `encrypted_data`: The encrypted database as bytes.
 <a href=#100 id=100 data-nosnippet>100</a>/// - `master_password`: The password to decrypt data.
 <a href=#101 id=101 data-nosnippet>101</a>/// ## Returns
-<a href=#102 id=102 data-nosnippet>102</a>/// A result of the decrypted entries or a [`FortressError`]. 
+<a href=#102 id=102 data-nosnippet>102</a>/// A result of the decrypted entries or a [`FortressError`].
 <a href=#103 id=103 data-nosnippet>103</a></span><span class="attr">#[allow(deprecated)]
 <a href=#104 id=104 data-nosnippet>104</a></span><span class="kw">pub fn </span>decrypt_database(
 <a href=#105 id=105 data-nosnippet>105</a>    encrypted_data: <span class="kw-2">&amp;</span>[u8],
