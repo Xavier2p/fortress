@@ -1,3 +1,4 @@
+//! Utility functions and structs.
 use crate::crypto;
 use crate::helpers::errors::FortressError;
 use std::fs;
@@ -7,6 +8,12 @@ pub mod cli;
 pub mod errors;
 pub mod structs;
 
+/// Encrypts the vault and saves it to the file.
+/// ## Parameters:
+/// - `args`: The context of the program
+/// - `entries`: The actual data
+/// ## Returns:
+/// A result of nothing or a [`FortressError`]
 pub fn save_vault(args: GeneralArgs, entries: &[PasswordEntry]) -> Result<(), FortressError> {
     let encrypted = match crypto::encrypt_database(entries, &args.password) {
         Ok(vault) => vault,
@@ -19,6 +26,11 @@ pub fn save_vault(args: GeneralArgs, entries: &[PasswordEntry]) -> Result<(), Fo
     }
 }
 
+/// Loads the vault from the file.
+/// ## Parameters:
+/// - `args`: The context of the program
+/// ## Returns:
+/// A result of a vector of [`PasswordEntry`] or a [`FortressError`]
 pub fn load_vault(args: GeneralArgs) -> Result<Vec<PasswordEntry>, FortressError> {
     let encrypted = match fs::read(&args.file) {
         Ok(data) => data,
@@ -31,6 +43,8 @@ pub fn load_vault(args: GeneralArgs) -> Result<Vec<PasswordEntry>, FortressError
     }
 }
 
+/// Prints a debug message if the verbose flag is set.
+/// TO BE IMPLEMENTED
 #[allow(dead_code)]
 pub fn debug(args: &GeneralArgs, message: String) {
     if args.verbose {
@@ -38,6 +52,12 @@ pub fn debug(args: &GeneralArgs, message: String) {
     }
 }
 
+/// Generates a random password of the given length.
+/// The password is copied to the clipboard.
+/// ## Parameters:
+/// - `length`: The length of the password
+/// ## Returns:
+/// A string containing the generated password.
 pub fn generate_password(length: usize) -> String {
     use rand::Rng;
     const CHARSET: &[u8] =

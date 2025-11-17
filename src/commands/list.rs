@@ -1,6 +1,13 @@
+//! List all entries in the vault.
 use crate::helpers::structs::GeneralArgs;
 use crate::helpers::{self, errors::FortressError};
 
+/// List all entries in the vault.
+/// All the entries will be printed with the format defined.
+/// ## Parameters:
+/// - `args`: The context of the program
+/// ## Returns:
+/// A result of nothing or a [`FortressError`]
 pub fn list(args: GeneralArgs) -> Result<(), FortressError> {
     let decrypted = helpers::load_vault(args);
     match decrypted {

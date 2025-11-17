@@ -1,7 +1,15 @@
+//! Create a new vault.
 use crate::helpers::structs::{GeneralArgs, PasswordEntry};
 use crate::helpers::{self, errors::FortressError};
 use std::path::Path;
 
+/// Create a new vault.
+/// If the vault already exists, an error is returned unless force is set.
+/// ## Parameters:
+/// - `force`: If true, overwrite the existing vault.
+/// - `args`: The context of the program
+/// ## Returns:
+/// A result of nothing or a [`FortressError`]
 pub fn create(force: bool, args: GeneralArgs) -> Result<(), FortressError> {
     if Path::new(&args.file).exists() && !force {
         Err(FortressError::VaultAlreadyExists)
