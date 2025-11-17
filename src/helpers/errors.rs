@@ -1,6 +1,7 @@
-use std::fmt::Debug;
-use std::io;
+//! Error handling and types.
+use std::{fmt::Debug, io};
 
+/// The different errors that can be raised by the program. Names are self-explanatory.
 #[allow(dead_code)]
 #[derive(Debug)]
 pub enum FortressError {
@@ -16,8 +17,10 @@ pub enum FortressError {
     CorruptedVault,
 }
 
+/// Treat errors as errors.
 impl std::error::Error for FortressError {}
 
+/// Display the error message.
 impl std::fmt::Display for FortressError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
@@ -64,6 +67,7 @@ impl std::fmt::Display for FortressError {
     }
 }
 
+/// Add `io` support for errors
 impl From<io::Error> for FortressError {
     fn from(error: io::Error) -> Self {
         if error.kind() == io::ErrorKind::NotFound {
@@ -74,12 +78,14 @@ impl From<io::Error> for FortressError {
     }
 }
 
+/// Add `serde` support for errors
 impl From<serde_json::Error> for FortressError {
     fn from(error: serde_json::Error) -> Self {
         FortressError::SerializationError(error)
     }
 }
 
+/// Print the error message and exit the program with a non-zero exit code.
 pub fn raise(error: FortressError) {
     eprintln!("Error: {}", error);
     std::process::exit(1);

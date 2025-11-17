@@ -1,5 +1,7 @@
+//! CLI related structs and functions.
 use clap::{Parser, Subcommand};
 
+/// The CLI context.
 #[derive(Parser)]
 #[command(name = "frt-rs", version, about, long_about = None)]
 #[command(propagate_version = true)]
@@ -21,6 +23,7 @@ pub struct Cli {
     pub stdin: bool,
 }
 
+/// The different commands that can be run.
 #[derive(Subcommand)]
 pub enum Commands {
     /// Create a new vault
@@ -52,14 +55,6 @@ pub enum Commands {
     /// List all entries in the vault
     List {},
 }
-
-// fn check_vault_path(input: &str) -> Result<String, String> {
-//     if !Path::new(input).exists() {
-//         Err(format!("The path '{}' does not exist.", input))
-//     } else {
-//         Ok(input.to_string())
-//     }
-// }
 
 #[cfg(test)]
 mod tests {

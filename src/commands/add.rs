@@ -1,6 +1,17 @@
+//! Add a new entry to the vault.
 use crate::helpers::structs::{GeneralArgs, PasswordEntry};
 use crate::helpers::{self, errors::FortressError};
 
+/// Add a new entry to the vault.
+/// If no one of password or generate is provided, the clipboard is used.
+/// ## Parameters:
+/// - `identifier`: the *path* od the entry. Must be unique.
+/// - `username`: Username or email used to login.
+/// - `password`: if provided, the password to save.
+/// - `generate`: If true, generate a new password.
+/// - `args`: The context of the program
+/// ## Returns:
+/// A result of nothing or a [`FortressError`]
 pub fn add(
     identifier: String,
     username: String,

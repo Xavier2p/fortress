@@ -1,13 +1,19 @@
+//! Some structs used throughout the program.
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
+/// A single entry in the vault.
 #[derive(Serialize, Deserialize, Clone)]
 pub struct PasswordEntry {
+    /// The identifier for the entry. Can be see as the path to the entry.
     pub identifier: String,
+    /// The username for the entry.
     pub username: String,
+    /// The password for the entry.
     pub password: String,
 }
 
+/// Display the entry in a readable format.
 impl fmt::Display for PasswordEntry {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
@@ -20,14 +26,20 @@ impl fmt::Display for PasswordEntry {
     }
 }
 
+/// The context of the program.
 #[derive(Clone)]
 pub struct GeneralArgs {
+    /// Enable verbose output
     pub verbose: bool,
+    /// The input file path
     pub file: String,
+    /// The master password
     pub password: String,
 }
 
+/// Function to use the program context.
 impl GeneralArgs {
+    /// Create a new context.
     pub fn new(verbose: bool, file: String, password: String) -> Self {
         GeneralArgs {
             verbose,
