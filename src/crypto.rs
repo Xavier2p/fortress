@@ -2,8 +2,8 @@
 use crate::helpers::errors::FortressError;
 use crate::helpers::structs::PasswordEntry;
 use aes_gcm::{
-    aead::{Aead, KeyInit}, Aes256Gcm, Key,
-    Nonce,
+    Aes256Gcm, Key, Nonce,
+    aead::{Aead, KeyInit},
 };
 use argon2::{Argon2, Params};
 use rand::RngCore;
@@ -99,7 +99,7 @@ pub fn encrypt_database(
 /// - `encrypted_data`: The encrypted database as bytes.
 /// - `master_password`: The password to decrypt data.
 /// ## Returns
-/// A result of the decrypted entries or a [`FortressError`]. 
+/// A result of the decrypted entries or a [`FortressError`].
 #[allow(deprecated)]
 pub fn decrypt_database(
     encrypted_data: &[u8],
