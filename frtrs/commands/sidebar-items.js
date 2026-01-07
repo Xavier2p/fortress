@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["add","create","list"]};
+window.SIDEBAR_ITEMS = {"mod":["add","copy","create","list","view"]};
