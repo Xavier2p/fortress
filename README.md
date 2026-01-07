@@ -28,6 +28,14 @@ Then, add entries to the vault (see docs to know more about the arguments):
 
 ## Installation
 
+### Quick with Nix Flakes
+
+```sh
+nix run github:/xavier2p/fortress
+```
+
+### Build
+
 *Note: This project requires Rust 1.56+ to build.*
 
 1. Clone the repository
@@ -43,6 +51,8 @@ Then, add entries to the vault (see docs to know more about the arguments):
  ```
 
 ## Usage
+
+> For Flake utilisation, please add before each command the `--` to precise it's a command to frotress.
 
  ```console
  $ frtrs --help
