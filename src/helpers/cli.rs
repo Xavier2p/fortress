@@ -33,7 +33,22 @@ pub enum Commands {
         force: bool,
     },
 
-    /// Add a new entry to the vault
+    /// Copy the password of the desired identifier
+    Copy {
+        /// The identifier of the entry
+        #[arg(short, long)]
+        identifier: String,
+    },
+
+    /// View the password of the desired identifier
+    View {
+        /// The identifier of the entry
+        #[arg(short, long)]
+        identifier: String,
+    },
+
+    /// Add a new entry to the vault. If no one of the password methods are provided,
+    /// the password will be the content of the clipboard.
     #[command(arg_required_else_help = true)]
     Add {
         /// The identifier for the entry

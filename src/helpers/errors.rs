@@ -15,6 +15,8 @@ pub enum FortressError {
     SerializationError(serde_json::Error),
     InvalidMasterPassword,
     CorruptedVault,
+    IdNotFound(String),
+    Clipboard(String),
 }
 
 /// Treat errors as errors.
@@ -63,6 +65,14 @@ impl std::fmt::Display for FortressError {
             }
             FortressError::IoError(e) => write!(f, "IoError: {}", e),
             FortressError::SerializationError(e) => write!(f, "SerializationError: {}", e),
+            FortressError::IdNotFound(id) => {
+                write!(f, "IdNotFoundError: `{}` not found in the vault", id)
+            }
+            FortressError::Clipboard(pass) => write!(
+                f,
+                "ClipboardError: Unable to copy, the password is {}",
+                pass
+            ),
         }
     }
 }
