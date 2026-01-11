@@ -5,9 +5,9 @@
 ## Concepts
 
 You must define a master password, which will be used to encrypt the vault.
-Each time you want to use the vault, this password will be asked you.
+Each time you want to use the vault, you will be asked for this password.
 
-First, create a vault file:
+First, create a vault file (by default it will create the vault at `/tmp/vault.frt`):
 
  ```sh
  frtrs create
@@ -18,6 +18,9 @@ Then, add entries to the vault (see docs to know more about the arguments):
  ```sh
  frtrs add --identifier <identifier> --username <username> --password <password>
  ```
+
+> [!IMPORTANT]
+> If none of the password methods are provided (neither `-p` nor `-g`), the password will be the content of the **clipboard**
 
 ## Security Principles
 
@@ -31,12 +34,13 @@ Then, add entries to the vault (see docs to know more about the arguments):
 ### Quick with Nix Flakes
 
 ```sh
-nix run github:/xavier2p/fortress
+nix run github:/xavier2p/fortress -- create
 ```
 
 ### Build
 
-*Note: This project requires Rust 1.56+ to build.*
+> [!Note]
+> This project requires Rust 1.56+ to build.
 
 1. Clone the repository
 
@@ -52,20 +56,25 @@ nix run github:/xavier2p/fortress
 
 ## Usage
 
-> For Flake utilisation, please add before each command the `--` to precise it's a command to frotress.
+> [!WARNING]
+> For Flake utilisation, please add before each command the `--` to precise it's a command to fortress.
+> 
+> e.g. `nix run github:/xavier2p/fortress -- --version`
 
  ```console
  $ frtrs --help
  A simple password safe CLI app
-
+ 
  Usage: frtrs [OPTIONS] [COMMAND]
-
+ 
  Commands:
    create  Create a new vault
+   copy    Copy the password of the desired identifier
+   view    View the password of the desired identifier
    add     Add a new entry to the vault
    list    List all entries in the vault
    help    Print this message or the help of the given subcommand(s)
-
+ 
  Options:
    -v, --verbose      Enable verbose output
    -f, --file <PATH>  The input file path [default: /tmp/vault.frt]
