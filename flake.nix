@@ -36,6 +36,7 @@
         bacon
         cargo
         cargo-audit
+        cargo-tarpaulin
         clippy
         gcc
         rustc
