@@ -2,8 +2,8 @@
 use crate::helpers::errors::FortressError;
 use crate::helpers::structs::PasswordEntry;
 use aes_gcm::{
-    Aes256Gcm, Key, Nonce,
-    aead::{Aead, KeyInit},
+    aead::{Aead, KeyInit}, Aes256Gcm, Key,
+    Nonce,
 };
 use argon2::{Argon2, Params};
 use rand::RngCore;
@@ -138,7 +138,6 @@ pub fn decrypt_database(
     Ok(wrapper.entries)
 }
 
-// Example usage
 #[cfg(test)]
 mod tests {
     use super::*;

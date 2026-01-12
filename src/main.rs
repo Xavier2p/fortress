@@ -100,7 +100,6 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::helpers::structs::GeneralArgs;
     use std::fs;
     use std::time::{SystemTime, UNIX_EPOCH};
@@ -126,11 +125,9 @@ mod tests {
 
         let args = GeneralArgs::new(false, path.clone(), "masterpw".to_string());
 
-        // Create vault
         let create_res = crate::commands::create::create(true, args.clone());
         assert!(create_res.is_ok());
 
-        // Add entry
         let add_res = crate::commands::add::add(
             "id1".to_string(),
             "user1".to_string(),
@@ -140,7 +137,6 @@ mod tests {
         );
         assert!(add_res.is_ok());
 
-        // List entries
         let list_res = crate::commands::list::list(args.clone());
         assert!(list_res.is_ok());
 
@@ -151,7 +147,6 @@ mod tests {
     fn test_create_without_force_fails_if_exists() {
         let path = tmp_path("main_exists");
         cleanup(&path);
-        // create a file to simulate existing vault
         let mut f = fs::File::create(&path).unwrap();
         use std::io::Write;
         writeln!(f, "dummy").unwrap();
