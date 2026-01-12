@@ -66,7 +66,6 @@ mod tests {
         .expect("add failed");
 
         let res = copy("copy_id".to_string(), args.clone());
-        // copy may succeed or return a Clipboard error depending on environment; both are acceptable
         assert!(res.is_ok() || matches!(res, Err(FortressError::Clipboard(_))));
         cleanup(&path);
     }

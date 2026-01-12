@@ -77,7 +77,6 @@ mod tests {
     fn test_create_vault_force_overwrite() {
         let path = "test_vault_force.enc";
         cleanup(path);
-        // Create file first
         let mut f = fs::File::create(path).unwrap();
         writeln!(f, "dummy").unwrap();
         let result = create(
@@ -91,7 +90,6 @@ mod tests {
 
     #[test]
     fn test_encryption_failed() {
-        // Simulate encryption failure by calling the mock
         let result = MockCrypto::encrypt_database(&vec![], "pw");
         assert!(result.is_err());
     }

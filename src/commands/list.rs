@@ -48,7 +48,6 @@ mod tests {
         cleanup(&path);
         let args = GeneralArgs::new(false, path.clone(), "pw".to_string());
 
-        // Expect error or ok depending on helpers implementation; test should be resilient
         let res = list(args);
         assert!(res.is_ok() || res.is_err());
         cleanup(&path);
