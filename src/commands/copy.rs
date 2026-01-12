@@ -4,7 +4,7 @@ use crate::helpers::{self, errors::FortressError};
 
 /// Copy the password of the specific entry.
 /// ## Parameters:
-/// - identifier: The path of the entry to copy
+/// - `identifier`: The path of the entry to copy
 /// - `args`: The context of the program
 /// ## Returns:
 /// A result of nothing or a [`FortressError`]
