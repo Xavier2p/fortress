@@ -36,28 +36,25 @@ pub enum Commands {
     /// Copy the password of the desired identifier
     Copy {
         /// The identifier of the entry
-        #[arg(short, long)]
         identifier: String,
     },
 
     /// View the password of the desired identifier
     View {
         /// The identifier of the entry
-        #[arg(short, long)]
         identifier: String,
     },
 
-    /// Add a new entry to the vault. If no one of the password methods are provided,
+    /// Add a new entry to the vault. If no one of the password methods is provided,
     /// the password will be the content of the clipboard.
     #[command(arg_required_else_help = true)]
     Add {
         /// The identifier for the entry
-        #[arg(short, long)]
         identifier: String,
 
-        /// The username for the entry
+        /// The username or email address for the entry
         #[arg(short, long)]
-        username: String,
+        username: Option<String>,
 
         /// Generate a new password. Mutually exclusive with 'password'
         #[arg(short, long, conflicts_with = "password")]
