@@ -30,6 +30,7 @@ impl fmt::Display for PasswordEntry {
 #[derive(Clone)]
 pub struct GeneralArgs {
     /// Enable verbose output
+    #[allow(dead_code)]
     pub verbose: bool,
     /// The input file path
     pub file: String,
