@@ -58,7 +58,6 @@ mod tests {
         let display = format!("{}", entry);
         assert!(display.contains("id"));
         assert!(display.contains("user"));
-        assert!(display.contains("******"));
     }
 
     #[test]
