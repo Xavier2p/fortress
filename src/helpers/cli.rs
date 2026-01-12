@@ -45,6 +45,12 @@ pub enum Commands {
         identifier: String,
     },
 
+    /// Remove an entry from the vault
+    Remove {
+        /// The identifier of the entry to remove
+        identifier: String,
+    },
+
     /// Add a new entry to the vault. If no one of the password methods is provided,
     /// the password will be the content of the clipboard.
     #[command(arg_required_else_help = true)]
@@ -74,14 +80,7 @@ mod tests {
 
     #[test]
     fn test_cli_parse_add() {
-        let cli = Cli::parse_from([
-            "frt-rs",
-            "add",
-            "id",
-            "--username",
-            "user",
-            "--generate",
-        ]);
+        let cli = Cli::parse_from(["frt-rs", "add", "id", "--username", "user", "--generate"]);
         matches!(cli.command, Some(Commands::Add { .. }));
     }
 
