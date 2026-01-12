@@ -34,7 +34,7 @@ Then, add entries to the vault (see docs to know more about the arguments):
 ### Quick with Nix Flakes
 
 ```sh
-nix run github:/xavier2p/fortress -- create
+nix run github:/xavier2p/fortress
 ```
 
 ### Build
