@@ -99,3 +99,55 @@ mod tests {
         // No assertion, just ensure no panic
     }
 }
+
+#[cfg(test)]
+mod roundtrip_tests {
+    use super::*;
+    use crate::helpers::structs::GeneralArgs;
+    use crate::helpers::structs::PasswordEntry;
+    use std::fs;
+    use std::time::{SystemTime, UNIX_EPOCH};
+
+    fn tmp_path(name: &str) -> String {
+        let mut p = std::env::temp_dir();
+        let nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        p.push(format!("fortress_test_{}_{}.enc", name, nanos));
+        p.to_str().unwrap().to_string()
+    }
+
+    fn cleanup(path: &str) {
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn test_save_and_load_vault_roundtrip() {
+        let path = tmp_path("save_load");
+        cleanup(&path);
+
+        let args = GeneralArgs::new(false, path.clone(), "masterpw".to_string());
+
+        let entries = vec![PasswordEntry {
+            identifier: "id_rt".to_string(),
+            username: "user_rt".to_string(),
+            password: "pw_rt".to_string(),
+        }];
+
+        // Save
+        let save_res = save_vault(args.clone(), &entries);
+        assert!(save_res.is_ok());
+
+        // Load
+        let load_res = load_vault(args.clone());
+        assert!(load_res.is_ok());
+        let loaded = load_res.unwrap();
+        assert_eq!(loaded.len(), 1);
+        assert_eq!(loaded[0].identifier, "id_rt");
+        assert_eq!(loaded[0].username, "user_rt");
+        assert_eq!(loaded[0].password, "pw_rt");
+
+        cleanup(&path);
+    }
+}

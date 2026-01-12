@@ -20,7 +20,8 @@ Then, add entries to the vault (see docs to know more about the arguments):
  ```
 
 > [!IMPORTANT]
-> If none of the password methods are provided (neither `-p` nor `-g`), the password will be the content of the **clipboard**
+> If none of the password methods are provided (neither `-p` nor `-g`), the password will be the content of the *
+*clipboard**
 
 ## Security Principles
 
@@ -57,8 +58,8 @@ nix run github:/xavier2p/fortress
 ## Usage
 
 > [!WARNING]
-> For Flake utilisation, please add before each command the `--` to precise it's a command to fortress.
-> 
+> For Flake utilization, please add before each command the `--` to precise it's a command to fortress.
+>
 > e.g. `nix run github:/xavier2p/fortress -- --version`
 
  ```console
