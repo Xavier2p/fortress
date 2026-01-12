@@ -1,2 +1,2 @@
-createSrcSidebar('[["frtrs",["",[["commands",[],["add.rs","copy.rs","create.rs","list.rs","mod.rs","view.rs"]],["helpers",[],["cli.rs","errors.rs","mod.rs","structs.rs"]]],["crypto.rs","main.rs"]]]]');
-//{"start":19,"fragment_lengths":[178]}
+createSrcSidebar('[["frtrs",["",[["commands",[],["add.rs","copy.rs","create.rs","list.rs","mod.rs","remove.rs","view.rs"]],["helpers",[],["cli.rs","errors.rs","mod.rs","structs.rs"]]],["crypto.rs","main.rs"]]]]');
+//{"start":19,"fragment_lengths":[190]}
