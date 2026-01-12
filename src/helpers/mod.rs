@@ -2,6 +2,7 @@
 use crate::crypto;
 use crate::helpers::errors::FortressError;
 use std::fs;
+use std::path::Path;
 use structs::{GeneralArgs, PasswordEntry};
 
 pub mod cli;
@@ -32,6 +33,10 @@ pub fn save_vault(args: GeneralArgs, entries: &[PasswordEntry]) -> Result<(), Fo
 /// ## Returns:
 /// A result of a vector of [`PasswordEntry`] or a [`FortressError`]
 pub fn load_vault(args: GeneralArgs) -> Result<Vec<PasswordEntry>, FortressError> {
+    if !Path::new(&args.file).exists() {
+        return Err(FortressError::VaultNotFound);
+    }
+
     let encrypted = match fs::read(&args.file) {
         Ok(data) => data,
         Err(e) => return Err(FortressError::IoError(e)),
@@ -40,15 +45,6 @@ pub fn load_vault(args: GeneralArgs) -> Result<Vec<PasswordEntry>, FortressError
     match crypto::decrypt_database(&encrypted, &args.password) {
         Ok(entries) => Ok(entries),
         Err(_) => Err(FortressError::DecryptionFailed),
-    }
-}
-
-/// Prints a debug message if the verbose flag is set.
-/// TO BE IMPLEMENTED
-#[allow(dead_code)]
-pub fn debug(args: &GeneralArgs, message: String) {
-    if args.verbose {
-        println!("[DEBUG]: {}", message);
     }
 }
 
@@ -85,28 +81,15 @@ pub fn generate_password(length: usize) -> String {
 mod tests {
     use super::*;
     use crate::helpers::structs::GeneralArgs;
+    use crate::helpers::structs::PasswordEntry;
+    use std::fs;
+    use std::time::{SystemTime, UNIX_EPOCH};
 
     #[test]
     fn test_generate_password_length() {
         let pw = generate_password(16);
         assert_eq!(pw.len(), 16);
     }
-
-    #[test]
-    fn test_debug_output() {
-        let args = GeneralArgs::new(true, "file".to_string(), "pw".to_string());
-        debug(&args, "test message".to_string());
-        // No assertion, just ensure no panic
-    }
-}
-
-#[cfg(test)]
-mod roundtrip_tests {
-    use super::*;
-    use crate::helpers::structs::GeneralArgs;
-    use crate::helpers::structs::PasswordEntry;
-    use std::fs;
-    use std::time::{SystemTime, UNIX_EPOCH};
 
     fn tmp_path(name: &str) -> String {
         let mut p = std::env::temp_dir();
