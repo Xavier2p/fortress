@@ -97,3 +97,69 @@ fn main() {
         Err(e) => raise(e),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::helpers::structs::GeneralArgs;
+    use std::fs;
+    use std::time::{SystemTime, UNIX_EPOCH};
+
+    fn tmp_path(name: &str) -> String {
+        let mut p = std::env::temp_dir();
+        let nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        p.push(format!("fortress_test_{}_{}.enc", name, nanos));
+        p.to_str().unwrap().to_string()
+    }
+
+    fn cleanup(path: &str) {
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn test_create_add_list_flow() {
+        let path = tmp_path("main_flow");
+        cleanup(&path);
+
+        let args = GeneralArgs::new(false, path.clone(), "masterpw".to_string());
+
+        // Create vault
+        let create_res = crate::commands::create::create(true, args.clone());
+        assert!(create_res.is_ok());
+
+        // Add entry
+        let add_res = crate::commands::add::add(
+            "id1".to_string(),
+            "user1".to_string(),
+            Some("secretpw".to_string()),
+            false,
+            args.clone(),
+        );
+        assert!(add_res.is_ok());
+
+        // List entries
+        let list_res = crate::commands::list::list(args.clone());
+        assert!(list_res.is_ok());
+
+        cleanup(&path);
+    }
+
+    #[test]
+    fn test_create_without_force_fails_if_exists() {
+        let path = tmp_path("main_exists");
+        cleanup(&path);
+        // create a file to simulate existing vault
+        let mut f = fs::File::create(&path).unwrap();
+        use std::io::Write;
+        writeln!(f, "dummy").unwrap();
+
+        let args = GeneralArgs::new(false, path.clone(), "pw".to_string());
+        let res = crate::commands::create::create(false, args.clone());
+        assert!(res.is_err());
+
+        cleanup(&path);
+    }
+}

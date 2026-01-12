@@ -109,20 +109,68 @@ mod tests {
     #[test]
     fn test_display_vault_already_exists() {
         let err = FortressError::VaultAlreadyExists;
-        assert!(format!("{}", err).contains("VaultAlreadyExists"));
+        let s = format!("{}", err);
+        assert!(s.contains("VaultAlreadyExists"));
     }
 
     #[test]
-    fn test_io_error_conversion() {
+    fn test_io_error_conversion_not_found() {
         let io_err = io::Error::new(io::ErrorKind::NotFound, "not found");
         let fortress_err: FortressError = io_err.into();
-        matches!(fortress_err, FortressError::VaultNotFound);
+        assert!(matches!(fortress_err, FortressError::VaultNotFound));
+    }
+
+    #[test]
+    fn test_io_error_conversion_other() {
+        let io_err = io::Error::new(io::ErrorKind::PermissionDenied, "denied");
+        let fortress_err: FortressError = io_err.into();
+        assert!(matches!(fortress_err, FortressError::IoError(_)));
     }
 
     #[test]
     fn test_serde_error_conversion() {
         let serde_err = serde_json::from_str::<serde_json::Value>("not_json").unwrap_err();
         let fortress_err: FortressError = serde_err.into();
-        matches!(fortress_err, FortressError::SerializationError(_));
+        assert!(matches!(fortress_err, FortressError::SerializationError(_)));
+    }
+
+    #[test]
+    fn test_display_various_errors() {
+        let cases: Vec<(FortressError, &str)> = vec![
+            (FortressError::CorruptedVault, "CorruptedVault"),
+            (
+                FortressError::InvalidMasterPassword,
+                "InvalidMasterPassword",
+            ),
+            (FortressError::DecryptionFailed, "DecryptionFailed"),
+            (FortressError::EncryptionFailed, "EncryptionFailed"),
+            (FortressError::VaultNotFound, "VaultNotFound"),
+            (FortressError::InvalidVaultPath, "InvalidVaultPath"),
+            (FortressError::InvalidCommand, "InvalidCommand"),
+        ];
+
+        for (err, substr) in cases {
+            let s = format!("{}", err);
+            assert!(
+                s.contains(substr),
+                "Display for {:?} should contain '{}' but was '{}'",
+                err,
+                substr,
+                s
+            );
+        }
+    }
+
+    #[test]
+    fn test_display_id_not_found_and_clipboard() {
+        let id = "missing_id".to_string();
+        let e = FortressError::IdNotFound(id.clone());
+        let s = format!("{}", e);
+        assert!(s.contains(&id));
+
+        let pw = "topsecret".to_string();
+        let e2 = FortressError::Clipboard(pw.clone());
+        let s2 = format!("{}", e2);
+        assert!(s2.contains(&pw));
     }
 }
