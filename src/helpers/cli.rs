@@ -77,7 +77,6 @@ mod tests {
         let cli = Cli::parse_from([
             "frt-rs",
             "add",
-            "--identifier",
             "id",
             "--username",
             "user",

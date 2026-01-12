@@ -16,13 +16,7 @@ pub struct PasswordEntry {
 /// Display the entry in a readable format.
 impl fmt::Display for PasswordEntry {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{} ({}): '{}'",
-            self.identifier,
-            self.username,
-            "*".repeat(self.password.len())
-        )
+        write!(f, "{} ({}): '*****'", self.identifier, self.username)
     }
 }
 
