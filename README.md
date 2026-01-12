@@ -94,6 +94,12 @@ All technical documentation is online, see [docs](https://xavier2p.github.io/for
 cargo test
 ```
 
+### See Code Coverage
+
+```sh
+cargo tarpaulin
+```
+
 ### Build and run
 
 ```sh
