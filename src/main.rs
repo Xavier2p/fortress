@@ -95,7 +95,9 @@ fn main() {
         Some(cli::Commands::List {}) => commands::list::list(general_args),
         Some(cli::Commands::Copy { identifier }) => commands::copy::copy(identifier, general_args),
         Some(cli::Commands::View { identifier }) => commands::view::view(identifier, general_args),
-        Some(cli::Commands::Remove { identifier }) => commands::remove::remove(identifier, general_args),
+        Some(cli::Commands::Remove { identifier }) => {
+            commands::remove::remove(identifier, general_args)
+        }
         None => commands::list::list(general_args),
     };
 

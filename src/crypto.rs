@@ -2,8 +2,8 @@
 use crate::helpers::errors::FortressError;
 use crate::helpers::structs::PasswordEntry;
 use aes_gcm::{
-    aead::{Aead, KeyInit}, Aes256Gcm, Key,
-    Nonce,
+    Aes256Gcm, Key, Nonce,
+    aead::{Aead, KeyInit},
 };
 use argon2::{Argon2, Params};
 use rand::RngCore;
