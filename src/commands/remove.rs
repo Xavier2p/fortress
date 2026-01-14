@@ -83,10 +83,7 @@ mod tests {
         let args = GeneralArgs::new(false, path.clone(), "master".to_string());
         crate::commands::create::create(true, args.clone()).expect("create failed");
         let remove_res = remove("nonexistent_id".to_string(), args.clone());
-        assert!(matches!(
-            remove_res,
-            Err(FortressError::IdNotFound(_))
-        ));
+        assert!(matches!(remove_res, Err(FortressError::IdNotFound(_))));
         cleanup(&path);
     }
 }

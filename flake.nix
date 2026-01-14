@@ -2,15 +2,21 @@
   description = "A simple password manager written in Rust";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  inputs.rust-overlay.url = "github:oxalica/rust-overlay";
 
   outputs = {
     self,
     nixpkgs,
+    rust-overlay,
   }: let
     system = "x86_64-linux";
     pkgs = import nixpkgs {
       inherit system;
       config.allowUnfree = true;
+      overlays = [(import rust-overlay)];
+    };
+    rustToolchain = pkgs.rust-bin.stable.latest.default.override {
+      extensions = ["rust-src" "clippy" "rustfmt"];
     };
   in {
     packages.${system}.default = let
@@ -32,17 +38,24 @@
 
     devShells.${system}.default = pkgs.mkShell {
       name = "rust";
+      nativeBuildInputs = with pkgs; [rustToolchain];
       buildInputs = with pkgs; [
         bacon
         cargo
         cargo-audit
         cargo-tarpaulin
-        clippy
-        gcc
-        rustc
-        rustfmt
+        rust-analyzer
         wrkflw
+        jetbrains.rust-rover
       ];
+      shellHook = ''
+        mkdir -p ~/.rust-rover/toolchain
+
+        ln -sfn ${rustToolchain}/lib ~/.rust-rover/toolchain
+        ln -sfn ${rustToolchain}/bin ~/.rust-rover/toolchain
+
+        export RUST_SRC_PATH="$HOME/.rust-rover/toolchain/lib/rustlib/src/rust/library"
+      '';
     };
   };
 }
