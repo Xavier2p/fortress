@@ -66,14 +66,23 @@ use clap::Parser;
 use helpers::structs::GeneralArgs;
 use helpers::{cli, errors::raise, logger};
 use rpassword::prompt_password;
+use std::io;
+use std::io::{IsTerminal, Read, Stdin};
 
 /// The main function, in which all magic happens.
 fn main() {
     let args: cli::Cli = cli::Cli::parse();
     let _ = logger::init(args.log_file.as_deref());
 
-    // get password TODO match with stdin flag
-    let password: String = prompt_password("Enter the vault password: ").unwrap();
+    let stdin: Stdin = io::stdin();
+    let mut password: String = String::new();
+    if stdin.is_terminal() {
+        password = prompt_password("Enter the master vault password: ").unwrap();
+    } else {
+        let mut handle = stdin.lock();
+        let _ = handle.read_to_string(&mut password);
+        password = password.trim().to_string();
+    }
 
     let general_args: GeneralArgs = GeneralArgs::new(args.file.unwrap(), password);
 
