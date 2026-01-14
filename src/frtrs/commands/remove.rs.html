@@ -83,10 +83,7 @@
 <a href=#83 id=83 data-nosnippet>83</a>        <span class="kw">let </span>args = GeneralArgs::new(<span class="bool-val">false</span>, path.clone(), <span class="string">"master"</span>.to_string());
 <a href=#84 id=84 data-nosnippet>84</a>        <span class="kw">crate</span>::commands::create::create(<span class="bool-val">true</span>, args.clone()).expect(<span class="string">"create failed"</span>);
 <a href=#85 id=85 data-nosnippet>85</a>        <span class="kw">let </span>remove_res = remove(<span class="string">"nonexistent_id"</span>.to_string(), args.clone());
-<a href=#86 id=86 data-nosnippet>86</a>        <span class="macro">assert!</span>(<span class="macro">matches!</span>(
-<a href=#87 id=87 data-nosnippet>87</a>            remove_res,
-<a href=#88 id=88 data-nosnippet>88</a>            <span class="prelude-val">Err</span>(FortressError::IdNotFound(<span class="kw">_</span>))
-<a href=#89 id=89 data-nosnippet>89</a>        ));
-<a href=#90 id=90 data-nosnippet>90</a>        cleanup(<span class="kw-2">&amp;</span>path);
-<a href=#91 id=91 data-nosnippet>91</a>    }
-<a href=#92 id=92 data-nosnippet>92</a>}</code></pre></div></section></main></body></html>
+<a href=#86 id=86 data-nosnippet>86</a>        <span class="macro">assert!</span>(<span class="macro">matches!</span>(remove_res, <span class="prelude-val">Err</span>(FortressError::IdNotFound(<span class="kw">_</span>))));
+<a href=#87 id=87 data-nosnippet>87</a>        cleanup(<span class="kw-2">&amp;</span>path);
+<a href=#88 id=88 data-nosnippet>88</a>    }
+<a href=#89 id=89 data-nosnippet>89</a>}</code></pre></div></section></main></body></html>
