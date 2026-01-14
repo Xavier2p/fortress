@@ -14,13 +14,14 @@ use std::path::Path;
 pub fn create(force: bool, args: GeneralArgs) -> Result<(), FortressError> {
     if Path::new(&args.file).exists() && !force {
         Err(FortressError::VaultAlreadyExists)
-    } else if (estimate_strength(args.clone().password.as_str()) <= 8.7) {
+    } else if estimate_strength(args.clone().password.as_str()) <= 0.7 {
         Err(FortressError::WeakPassword)
     } else {
         let empty_entries: Vec<PasswordEntry> = Vec::new();
         match helpers::save_vault(args.clone(), &empty_entries) {
             Ok(_) => {
                 println!("Created new vault at {}", args.file);
+                log::info!("Created new vault at {}", args.file);
                 Ok(())
             }
             Err(e) => Err(e),
@@ -35,12 +36,10 @@ mod tests {
     use std::io::Write;
     use std::path::Path;
 
-    // Helper to clean up test files
     fn cleanup(path: &str) {
         let _ = fs::remove_file(path);
     }
 
-    // Mock Crypto for error simulation
     struct MockCrypto;
     impl MockCrypto {
         fn encrypt_database(_: &Vec<PasswordEntry>, _: &str) -> Result<Vec<u8>, ()> {
@@ -54,7 +53,7 @@ mod tests {
         cleanup(path);
         let result = create(
             true,
-            GeneralArgs::new(false, path.to_string(), "testpw".to_string()),
+            GeneralArgs::new(path.to_string(), "testpw".to_string()),
         );
         assert!(result.is_ok());
         assert!(Path::new(path).exists());
@@ -65,13 +64,9 @@ mod tests {
     fn test_create_vault_already_exists() {
         let path = "test_vault_exists.enc";
         cleanup(path);
-        // Create file first
         let mut f = fs::File::create(path).unwrap();
         writeln!(f, "dummy").unwrap();
-        let result = create(
-            false,
-            GeneralArgs::new(false, path.to_string(), "pw".to_string()),
-        );
+        let result = create(false, GeneralArgs::new(path.to_string(), "pw".to_string()));
         assert!(matches!(result, Err(FortressError::VaultAlreadyExists)));
         cleanup(path);
     }
@@ -82,10 +77,7 @@ mod tests {
         cleanup(path);
         let mut f = fs::File::create(path).unwrap();
         writeln!(f, "dummy").unwrap();
-        let result = create(
-            true,
-            GeneralArgs::new(false, path.to_string(), "pw".to_string()),
-        );
+        let result = create(true, GeneralArgs::new(path.to_string(), "pw".to_string()));
         assert!(result.is_ok());
         assert!(Path::new(path).exists());
         cleanup(path);

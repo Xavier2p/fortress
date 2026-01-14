@@ -64,19 +64,18 @@ mod helpers;
 
 use clap::Parser;
 use helpers::structs::GeneralArgs;
-use helpers::{cli, errors::raise};
+use helpers::{cli, errors::raise, logger};
 use rpassword::prompt_password;
 
 /// The main function, in which all magic happens.
 fn main() {
     let args: cli::Cli = cli::Cli::parse();
-
-    // Sanitize and validate all args here
+    let _ = logger::init(args.log_file.as_deref());
 
     // get password TODO match with stdin flag
     let password: String = prompt_password("Enter the vault password: ").unwrap();
 
-    let general_args: GeneralArgs = GeneralArgs::new(args.verbose, args.file.unwrap(), password);
+    let general_args: GeneralArgs = GeneralArgs::new(args.file.unwrap(), password);
 
     let result = match args.command {
         Some(cli::Commands::Create { force }) => commands::create::create(force, general_args),
@@ -132,7 +131,7 @@ mod tests {
         let path = tmp_path("main_flow");
         cleanup(&path);
 
-        let args = GeneralArgs::new(false, path.clone(), "masterpw".to_string());
+        let args = GeneralArgs::new(path.clone(), "masterpw".to_string());
 
         let create_res = crate::commands::create::create(true, args.clone());
         assert!(create_res.is_ok());
@@ -160,7 +159,7 @@ mod tests {
         use std::io::Write;
         writeln!(f, "dummy").unwrap();
 
-        let args = GeneralArgs::new(false, path.clone(), "pw".to_string());
+        let args = GeneralArgs::new(path.clone(), "pw".to_string());
         let res = crate::commands::create::create(false, args.clone());
         assert!(res.is_err());
 

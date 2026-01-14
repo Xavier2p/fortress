@@ -1,4 +1,5 @@
 //! View a specific entry in the vault.
+
 use crate::helpers::structs::GeneralArgs;
 use crate::helpers::{self, errors::FortressError};
 
@@ -14,6 +15,7 @@ pub fn view(identifier: String, args: GeneralArgs) -> Result<(), FortressError> 
         Ok(decrypted) => match decrypted.iter().find(|item| item.identifier == identifier) {
             Some(el) => {
                 println!("{}", el);
+                log::info!("Entry viewed: {}", identifier);
                 println!("The decoded password is: `{}`", el.password);
                 Ok(())
             }
@@ -49,7 +51,7 @@ mod tests {
     fn test_view_existing_and_missing() {
         let path = tmp_path("view_test");
         cleanup(&path);
-        let args = GeneralArgs::new(false, path.clone(), "master".to_string());
+        let args = GeneralArgs::new(path.clone(), "master".to_string());
         crate::commands::create::create(true, args.clone()).expect("create failed");
         crate::commands::add::add(
             "view_id".to_string(),

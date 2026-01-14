@@ -16,6 +16,7 @@ pub fn copy(identifier: String, args: GeneralArgs) -> Result<(), FortressError> 
                 println!("{}", el);
                 match cli_clipboard::set_contents(el.password.to_string()) {
                     Ok(_) => {
+                        log::info!("Copied Password: {}", identifier);
                         println!("The decoded password is in your clipboard");
                         Ok(())
                     }
@@ -54,7 +55,7 @@ mod tests {
     fn test_copy_existing_entry() {
         let path = tmp_path("copy_test");
         cleanup(&path);
-        let args = GeneralArgs::new(false, path.clone(), "master".to_string());
+        let args = GeneralArgs::new(path.clone(), "master".to_string());
         crate::commands::create::create(true, args.clone()).expect("create failed");
         crate::commands::add::add(
             "copy_id".to_string(),
@@ -73,7 +74,7 @@ mod tests {
     fn test_copy_missing_entry() {
         let path = tmp_path("copy_missing");
         cleanup(&path);
-        let args = GeneralArgs::new(false, path.clone(), "master".to_string());
+        let args = GeneralArgs::new(path.clone(), "master".to_string());
         crate::commands::create::create(true, args.clone()).expect("create failed");
 
         let res = copy("no_id".to_string(), args.clone());

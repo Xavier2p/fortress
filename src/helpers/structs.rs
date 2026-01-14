@@ -23,9 +23,6 @@ impl fmt::Display for PasswordEntry {
 /// The context of the program.
 #[derive(Clone)]
 pub struct GeneralArgs {
-    /// Enable verbose output
-    #[allow(dead_code)]
-    pub verbose: bool,
     /// The input file path
     pub file: String,
     /// The master password
@@ -34,13 +31,9 @@ pub struct GeneralArgs {
 
 /// Function to use the program context.
 impl GeneralArgs {
-    /// Create a new context.
-    pub fn new(verbose: bool, file: String, password: String) -> Self {
-        GeneralArgs {
-            verbose,
-            file,
-            password,
-        }
+    /// Create a new context
+    pub fn new(file: String, password: String) -> Self {
+        GeneralArgs { file, password }
     }
 }
 
@@ -62,8 +55,7 @@ mod tests {
 
     #[test]
     fn test_general_args_new() {
-        let args = GeneralArgs::new(true, "file".to_string(), "pw".to_string());
-        assert!(args.verbose);
+        let args = GeneralArgs::new("file".to_string(), "pw".to_string());
         assert_eq!(args.file, "file");
         assert_eq!(args.password, "pw");
     }

@@ -102,6 +102,7 @@ impl From<serde_json::Error> for FortressError {
 
 /// Print the error message and exit the program with a non-zero exit code.
 pub fn raise(error: FortressError) {
+    log::error!("Error: {}", error);
     eprintln!("Error: {}", error);
     std::process::exit(1);
 }

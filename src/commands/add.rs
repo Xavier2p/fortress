@@ -6,7 +6,7 @@ use crate::helpers::{self, errors::FortressError};
 /// If no one of password or generate is provided, the clipboard is used.
 /// ## Parameters:
 /// - `identifier`: the *path* od the entry. Must be unique.
-/// - `username`: Username or email used to login.
+/// - `username`: Username or email used to log in.
 /// - `password`: if provided, the password to save.
 /// - `generate`: If true, generate a new password.
 /// - `args`: The context of the program
@@ -19,7 +19,6 @@ pub fn add(
     generate: bool,
     args: GeneralArgs,
 ) -> Result<(), FortressError> {
-    // Sanitize and validate inputs
     let password = if generate {
         helpers::generate_password(32)
     } else if let Some(pw) = password {
@@ -44,6 +43,7 @@ pub fn add(
     match helpers::save_vault(args, &updated) {
         Ok(_) => {
             println!("{}", entry);
+            log::info!("Added entry {}", entry.identifier);
             Ok(())
         }
         Err(e) => Err(e),
@@ -57,9 +57,8 @@ mod tests {
 
     #[test]
     fn test_add_with_generate() {
-        let args = GeneralArgs::new(false, "/tmp/test.frt".to_string(), "pw".to_string());
+        let args = GeneralArgs::new("/tmp/test.frt".to_string(), "pw".to_string());
         let result = add("id".to_string(), "user".to_string(), None, true, args);
-        // This will fail unless helpers are mocked, so just check type
         assert!(result.is_err() || result.is_ok());
     }
 }
