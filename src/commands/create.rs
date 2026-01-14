@@ -1,6 +1,7 @@
 //! Create a new vault.
 use crate::helpers::structs::{GeneralArgs, PasswordEntry};
 use crate::helpers::{self, errors::FortressError};
+use password_strength::estimate_strength;
 use std::path::Path;
 
 /// Create a new vault.
@@ -13,6 +14,8 @@ use std::path::Path;
 pub fn create(force: bool, args: GeneralArgs) -> Result<(), FortressError> {
     if Path::new(&args.file).exists() && !force {
         Err(FortressError::VaultAlreadyExists)
+    } else if (estimate_strength(args.clone().password.as_str()) <= 8.7) {
+        Err(FortressError::WeakPassword)
     } else {
         let empty_entries: Vec<PasswordEntry> = Vec::new();
         match helpers::save_vault(args.clone(), &empty_entries) {

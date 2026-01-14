@@ -17,6 +17,7 @@ pub enum FortressError {
     CorruptedVault,
     IdNotFound(String),
     Clipboard(String),
+    WeakPassword,
 }
 
 /// Treat errors as errors.
@@ -72,6 +73,10 @@ impl std::fmt::Display for FortressError {
                 f,
                 "ClipboardError: Unable to copy, the password is {}",
                 pass
+            ),
+            FortressError::WeakPassword => write!(
+                f,
+                "WeakPasswordError: Your master password is not at the required strength."
             ),
         }
     }
