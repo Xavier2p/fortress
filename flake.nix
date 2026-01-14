@@ -38,7 +38,7 @@
 
     devShells.${system}.default = pkgs.mkShell {
       name = "rust";
-      nativeBuildInputs = [pkgs.rustToolchain];
+      nativeBuildInputs = with pkgs; [rustToolchain];
       buildInputs = with pkgs; [
         bacon
         cargo
