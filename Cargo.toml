@@ -13,10 +13,13 @@ path = "src/main.rs"
 
 [dependencies]
 rand = "0.10.0-rc.0"
-serde = { version = "1.0.226", features = ["derive"] }
-clap = { version = "4.5.48", features = ["derive"] }
-serde_json = "1.0.145"
+serde = { version = "1.0.228", features = ["derive"] }
+clap = { version = "4.5.54", features = ["derive"] }
+serde_json = "1.0.149"
 rpassword = "7.4.0"
-argon2 = "0.6.0-rc.1"
+argon2 = "0.6.0-rc.5"
 cli-clipboard = "0.4.0"
-aes-gcm = "0.11.0-rc.1"
+aes-gcm = "0.11.0-rc.2"
+password-strength = "1.0.0"
+log = "0.4"
+simplelog = "0.12"

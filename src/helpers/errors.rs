@@ -2,13 +2,10 @@
 use std::{fmt::Debug, io};
 
 /// The different errors that can be raised by the program. Names are self-explanatory.
-#[allow(dead_code)]
 #[derive(Debug)]
 pub enum FortressError {
     VaultAlreadyExists,
     VaultNotFound,
-    InvalidVaultPath,
-    InvalidCommand,
     DecryptionFailed,
     EncryptionFailed,
     IoError(io::Error),
@@ -17,6 +14,7 @@ pub enum FortressError {
     CorruptedVault,
     IdNotFound(String),
     Clipboard(String),
+    WeakPassword,
 }
 
 /// Treat errors as errors.
@@ -50,12 +48,6 @@ impl std::fmt::Display for FortressError {
                     "VaultNotFound: The vault file was not found at the specified path."
                 )
             }
-            FortressError::InvalidVaultPath => {
-                write!(f, "InvalidVaultPath: The specified vault path is invalid.")
-            }
-            FortressError::InvalidCommand => {
-                write!(f, "InvalidCommand: The provided command is invalid.")
-            }
             FortressError::DecryptionFailed => write!(
                 f,
                 "DecryptionFailed: Failed to decrypt the vault. Possible reasons include an incorrect master password or corrupted data."
@@ -72,6 +64,10 @@ impl std::fmt::Display for FortressError {
                 f,
                 "ClipboardError: Unable to copy, the password is {}",
                 pass
+            ),
+            FortressError::WeakPassword => write!(
+                f,
+                "WeakPasswordError: Your master password is not at the required strength."
             ),
         }
     }
@@ -97,6 +93,7 @@ impl From<serde_json::Error> for FortressError {
 
 /// Print the error message and exit the program with a non-zero exit code.
 pub fn raise(error: FortressError) {
+    log::error!("Error: {}", error);
     eprintln!("Error: {}", error);
     std::process::exit(1);
 }
@@ -145,8 +142,6 @@ mod tests {
             (FortressError::DecryptionFailed, "DecryptionFailed"),
             (FortressError::EncryptionFailed, "EncryptionFailed"),
             (FortressError::VaultNotFound, "VaultNotFound"),
-            (FortressError::InvalidVaultPath, "InvalidVaultPath"),
-            (FortressError::InvalidCommand, "InvalidCommand"),
         ];
 
         for (err, substr) in cases {

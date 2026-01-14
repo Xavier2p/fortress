@@ -7,6 +7,7 @@ use structs::{GeneralArgs, PasswordEntry};
 
 pub mod cli;
 pub mod errors;
+pub mod logger;
 pub mod structs;
 
 /// Encrypts the vault and saves it to the file.
@@ -22,7 +23,10 @@ pub fn save_vault(args: GeneralArgs, entries: &[PasswordEntry]) -> Result<(), Fo
     };
 
     match fs::write(&args.file, encrypted) {
-        Ok(_) => Ok(()),
+        Ok(_) => {
+            log::warn!("Vault Saved");
+            Ok(())
+        }
         Err(e) => Err(FortressError::IoError(e)),
     }
 }
@@ -43,7 +47,10 @@ pub fn load_vault(args: GeneralArgs) -> Result<Vec<PasswordEntry>, FortressError
     };
 
     match crypto::decrypt_database(&encrypted, &args.password) {
-        Ok(entries) => Ok(entries),
+        Ok(entries) => {
+            log::warn!("Vault Opened");
+            Ok(entries)
+        }
         Err(_) => Err(FortressError::DecryptionFailed),
     }
 }
@@ -110,7 +117,7 @@ mod tests {
         let path = tmp_path("save_load");
         cleanup(&path);
 
-        let args = GeneralArgs::new(false, path.clone(), "masterpw".to_string());
+        let args = GeneralArgs::new(path.clone(), "masterpw".to_string());
 
         let entries = vec![PasswordEntry {
             identifier: "id_rt".to_string(),

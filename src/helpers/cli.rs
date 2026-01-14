@@ -10,17 +10,13 @@ pub struct Cli {
     #[command(subcommand)]
     pub command: Option<Commands>,
 
-    /// Enable verbose output
-    #[arg(short, long)]
-    pub verbose: bool,
-
     /// The input file path
     #[arg(short, long, value_name = "PATH", default_value = "/tmp/vault.frt")]
     pub file: Option<String>,
 
-    /// Get the master password from stdin. If not defined, will prompt for it
-    #[arg(long)]
-    pub stdin: bool,
+    /// Path to a file to write logs to
+    #[arg(long, value_name = "PATH", default_value = "/tmp/fortress.log")]
+    pub log_file: Option<String>,
 }
 
 /// The different commands that can be run.
