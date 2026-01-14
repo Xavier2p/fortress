@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["generate_password","load_vault","save_vault"],"mod":["cli","errors","structs"]};
+window.SIDEBAR_ITEMS = {"fn":["generate_password","load_vault","save_vault"],"mod":["cli","errors","logger","structs"]};
