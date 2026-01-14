@@ -55,7 +55,7 @@ mod tests {
     fn test_remove_existing_and_missing() {
         let path = tmp_path("remove_test");
         cleanup(&path);
-        let args = GeneralArgs::new(path.clone(), "master".to_string());
+        let args = GeneralArgs::new(path.clone(), "S3cureP@ssword".to_string());
         crate::commands::create::create(true, args.clone()).expect("create failed");
         crate::commands::add::add(
             "remove_id".to_string(),
@@ -82,7 +82,7 @@ mod tests {
     fn test_remove_from_empty_vault() {
         let path = tmp_path("remove_empty_test");
         cleanup(&path);
-        let args = GeneralArgs::new(path.clone(), "master".to_string());
+        let args = GeneralArgs::new(path.clone(), "S3cureP@ssword".to_string());
         crate::commands::create::create(true, args.clone()).expect("create failed");
         let remove_res = remove("nonexistent_id".to_string(), args.clone());
         assert!(matches!(remove_res, Err(FortressError::IdNotFound(_))));

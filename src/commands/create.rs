@@ -53,7 +53,7 @@ mod tests {
         cleanup(path);
         let result = create(
             true,
-            GeneralArgs::new(path.to_string(), "testpw".to_string()),
+            GeneralArgs::new(path.to_string(), "S3cureP@ssword".to_string()),
         );
         assert!(result.is_ok());
         assert!(Path::new(path).exists());
@@ -66,7 +66,10 @@ mod tests {
         cleanup(path);
         let mut f = fs::File::create(path).unwrap();
         writeln!(f, "dummy").unwrap();
-        let result = create(false, GeneralArgs::new(path.to_string(), "pw".to_string()));
+        let result = create(
+            false,
+            GeneralArgs::new(path.to_string(), "S3cureP@ssword".to_string()),
+        );
         assert!(matches!(result, Err(FortressError::VaultAlreadyExists)));
         cleanup(path);
     }
@@ -77,7 +80,10 @@ mod tests {
         cleanup(path);
         let mut f = fs::File::create(path).unwrap();
         writeln!(f, "dummy").unwrap();
-        let result = create(true, GeneralArgs::new(path.to_string(), "pw".to_string()));
+        let result = create(
+            true,
+            GeneralArgs::new(path.to_string(), "S3cureP@ssword".to_string()),
+        );
         assert!(result.is_ok());
         assert!(Path::new(path).exists());
         cleanup(path);

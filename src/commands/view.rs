@@ -51,7 +51,7 @@ mod tests {
     fn test_view_existing_and_missing() {
         let path = tmp_path("view_test");
         cleanup(&path);
-        let args = GeneralArgs::new(path.clone(), "master".to_string());
+        let args = GeneralArgs::new(path.clone(), "S3cureP@ssword".to_string());
         crate::commands::create::create(true, args.clone()).expect("create failed");
         crate::commands::add::add(
             "view_id".to_string(),

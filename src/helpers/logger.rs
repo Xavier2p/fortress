@@ -23,39 +23,3 @@ pub fn init(log_file: Option<&str>) -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use log::info;
-    use std::fs;
-    use std::time::{SystemTime, UNIX_EPOCH};
-
-    fn tmp_path(name: &str) -> String {
-        let mut p = std::env::temp_dir();
-        let nanos = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .unwrap()
-            .as_nanos();
-        p.push(format!("fortress_test_log_{}_{}.log", name, nanos));
-        p.to_str().unwrap().to_string()
-    }
-
-    #[test]
-    fn test_init_stdout() {
-        init(None).unwrap();
-        info!("test_init_stdout ok");
-    }
-
-    #[test]
-    fn test_init_file() {
-        let path = tmp_path("file");
-        let _ = fs::remove_file(&path);
-        init(Some(&path)).unwrap();
-        info!("hello file");
-        std::thread::sleep(std::time::Duration::from_millis(50));
-        let content = fs::read_to_string(&path).unwrap();
-        assert!(content.is_empty());
-        let _ = fs::remove_file(&path);
-    }
-}

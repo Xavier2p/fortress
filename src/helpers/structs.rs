@@ -55,8 +55,8 @@ mod tests {
 
     #[test]
     fn test_general_args_new() {
-        let args = GeneralArgs::new("file".to_string(), "pw".to_string());
+        let args = GeneralArgs::new("file".to_string(), "S3cureP@ssword".to_string());
         assert_eq!(args.file, "file");
-        assert_eq!(args.password, "pw");
+        assert_eq!(args.password, "S3cureP@ssword");
     }
 }

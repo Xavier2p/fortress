@@ -14,10 +14,6 @@ pub struct Cli {
     #[arg(short, long, value_name = "PATH", default_value = "/tmp/vault.frt")]
     pub file: Option<String>,
 
-    /// Get the master password from stdin. If not defined, will prompt for it
-    #[arg(long)]
-    pub stdin: bool,
-
     /// Path to a file to write logs to
     #[arg(long, value_name = "PATH", default_value = "/tmp/fortress.log")]
     pub log_file: Option<String>,

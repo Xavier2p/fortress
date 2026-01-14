@@ -11,7 +11,7 @@
 //!
 //! Then, add entries to the vault (see docs to know more about the arguments):
 //! ```sh
-//! frtrs add --identifier <identifier> --username <username> --password <password>
+//! frtrs add <identifier> --username <username> --password <password>
 //! ```
 //!
 //! ## Security Principles
@@ -46,17 +46,19 @@
 //! Usage: frtrs [OPTIONS] [COMMAND]
 //!
 //! Commands:
-//!   create  Create a new vault
-//!   add     Add a new entry to the vault
-//!   list    List all entries in the vault
-//!   help    Print this message or the help of the given subcommand(s)
+//! create  Create a new vault
+//! copy    Copy the password of the desired identifier
+//! view    View the password of the desired identifier
+//! remove  Remove an entry from the vault
+//! add     Add a new entry to the vault. If no one of the password methods is provided, the password will be the content of the clipboard
+//! list    List all entries in the vault
+//! help    Print this message or the help of the given subcommand(s)
 //!
 //! Options:
-//!   -v, --verbose      Enable verbose output
-//!   -f, --file <PATH>  The input file path [default: /tmp/vault.frt]
-//!       --stdin        Get the master password from stdin. If not defined, will prompt for it
-//!   -h, --help         Print help
-//!   -V, --version      Print version
+//! -f, --file <PATH>      The input file path [default: /tmp/vault.frt]
+//! --log-file <PATH>  Path to a file to write logs to [default: /tmp/fortress.log]
+//! -h, --help             Print help
+//! -V, --version          Print version
 //! ```
 mod commands;
 mod crypto;
@@ -140,7 +142,7 @@ mod tests {
         let path = tmp_path("main_flow");
         cleanup(&path);
 
-        let args = GeneralArgs::new(path.clone(), "masterpw".to_string());
+        let args = GeneralArgs::new(path.clone(), "S3cureP@ssword".to_string());
 
         let create_res = crate::commands::create::create(true, args.clone());
         assert!(create_res.is_ok());
@@ -168,7 +170,7 @@ mod tests {
         use std::io::Write;
         writeln!(f, "dummy").unwrap();
 
-        let args = GeneralArgs::new(path.clone(), "pw".to_string());
+        let args = GeneralArgs::new(path.clone(), "S3cureP@ssword".to_string());
         let res = crate::commands::create::create(false, args.clone());
         assert!(res.is_err());
 

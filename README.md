@@ -16,7 +16,7 @@ First, create a vault file (by default it will create the vault at `/tmp/vault.f
 Then, add entries to the vault (see docs to know more about the arguments):
 
  ```sh
- frtrs add --identifier <identifier> --username <username> --password <password>
+ frtrs add <identifier> --username <username> --password <password>
  ```
 
 > [!IMPORTANT]
@@ -62,27 +62,27 @@ nix run github:/xavier2p/fortress
 >
 > e.g. `nix run github:/xavier2p/fortress -- --version`
 
- ```console
- $ frtrs --help
- A simple password safe CLI app
- 
- Usage: frtrs [OPTIONS] [COMMAND]
- 
- Commands:
-   create  Create a new vault
-   copy    Copy the password of the desired identifier
-   view    View the password of the desired identifier
-   add     Add a new entry to the vault
-   list    List all entries in the vault
-   help    Print this message or the help of the given subcommand(s)
- 
- Options:
-   -v, --verbose      Enable verbose output
-   -f, --file <PATH>  The input file path [default: /tmp/vault.frt]
-       --stdin        Get the master password from stdin. If not defined, will prompt for it
-   -h, --help         Print help
-   -V, --version      Print version
- ```
+```console
+$ frtrs --help
+A simple password safe CLI app
+
+Usage: frtrs [OPTIONS] [COMMAND]
+
+Commands:
+  create  Create a new vault
+  copy    Copy the password of the desired identifier
+  view    View the password of the desired identifier
+  remove  Remove an entry from the vault
+  add     Add a new entry to the vault. If no one of the password methods is provided, the password will be the content of the clipboard
+  list    List all entries in the vault
+  help    Print this message or the help of the given subcommand(s)
+
+Options:
+  -f, --file <PATH>      The input file path [default: /tmp/vault.frt]
+      --log-file <PATH>  Path to a file to write logs to [default: /tmp/fortress.log]
+  -h, --help             Print help
+  -V, --version          Print version
+```
 
 ## Development
 

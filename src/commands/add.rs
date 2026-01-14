@@ -57,7 +57,7 @@ mod tests {
 
     #[test]
     fn test_add_with_generate() {
-        let args = GeneralArgs::new("/tmp/test.frt".to_string(), "pw".to_string());
+        let args = GeneralArgs::new("/tmp/test.frt".to_string(), "S3cureP@ssword".to_string());
         let result = add("id".to_string(), "user".to_string(), None, true, args);
         assert!(result.is_err() || result.is_ok());
     }

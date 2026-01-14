@@ -55,7 +55,7 @@ mod tests {
     fn test_copy_existing_entry() {
         let path = tmp_path("copy_test");
         cleanup(&path);
-        let args = GeneralArgs::new(path.clone(), "master".to_string());
+        let args = GeneralArgs::new(path.clone(), "S3cureP@ssword".to_string());
         crate::commands::create::create(true, args.clone()).expect("create failed");
         crate::commands::add::add(
             "copy_id".to_string(),
@@ -74,7 +74,7 @@ mod tests {
     fn test_copy_missing_entry() {
         let path = tmp_path("copy_missing");
         cleanup(&path);
-        let args = GeneralArgs::new(path.clone(), "master".to_string());
+        let args = GeneralArgs::new(path.clone(), "S3cureP@ssword".to_string());
         crate::commands::create::create(true, args.clone()).expect("create failed");
 
         let res = copy("no_id".to_string(), args.clone());

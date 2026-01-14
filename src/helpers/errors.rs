@@ -2,13 +2,10 @@
 use std::{fmt::Debug, io};
 
 /// The different errors that can be raised by the program. Names are self-explanatory.
-#[allow(dead_code)]
 #[derive(Debug)]
 pub enum FortressError {
     VaultAlreadyExists,
     VaultNotFound,
-    InvalidVaultPath,
-    InvalidCommand,
     DecryptionFailed,
     EncryptionFailed,
     IoError(io::Error),
@@ -50,12 +47,6 @@ impl std::fmt::Display for FortressError {
                     f,
                     "VaultNotFound: The vault file was not found at the specified path."
                 )
-            }
-            FortressError::InvalidVaultPath => {
-                write!(f, "InvalidVaultPath: The specified vault path is invalid.")
-            }
-            FortressError::InvalidCommand => {
-                write!(f, "InvalidCommand: The provided command is invalid.")
             }
             FortressError::DecryptionFailed => write!(
                 f,
@@ -151,8 +142,6 @@ mod tests {
             (FortressError::DecryptionFailed, "DecryptionFailed"),
             (FortressError::EncryptionFailed, "EncryptionFailed"),
             (FortressError::VaultNotFound, "VaultNotFound"),
-            (FortressError::InvalidVaultPath, "InvalidVaultPath"),
-            (FortressError::InvalidCommand, "InvalidCommand"),
         ];
 
         for (err, substr) in cases {

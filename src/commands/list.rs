@@ -47,7 +47,7 @@ mod tests {
     fn test_list_on_empty_vault() {
         let path = tmp_path("list_empty");
         cleanup(&path);
-        let args = GeneralArgs::new(path.clone(), "pw".to_string());
+        let args = GeneralArgs::new(path.clone(), "S3cureP@ssword".to_string());
 
         let res = list(args);
         assert!(res.is_ok() || res.is_err());
@@ -58,7 +58,7 @@ mod tests {
     fn test_list_after_add() {
         let path = tmp_path("list_after_add");
         cleanup(&path);
-        let args = GeneralArgs::new(path.clone(), "master".to_string());
+        let args = GeneralArgs::new(path.clone(), "S3cureP@ssword".to_string());
         crate::commands::create::create(true, args.clone()).expect("create failed");
         let _ = crate::commands::add::add(
             "id_list".to_string(),
